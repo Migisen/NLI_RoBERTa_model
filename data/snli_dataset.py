@@ -40,9 +40,11 @@ class SNLIData(Dataset):
         text, hypothesis = self.data[idx]
         judgment = self.data_labels[idx]
         text_sample = self.pad_input(text, hypothesis)
-        result_item = self.tokenizer.encode(text_sample, return_tensors='pt', max_length=self.max_length,
-                                            padding='max_length', truncation=True)  # 99% квантиль: 175 знака / 42 слова
-        return {'sentences': result_item, 'label': judgment}
+        result_item = self.tokenizer(text, hypothesis, return_tensors='pt', max_length=self.max_length,
+                                     padding='max_length', truncation=True)  # 99% квантиль: 175 знака / 42 слова
+        print(text, '->', hypothesis)
+        return {'input_ids': result_item['input_ids'], 'attention_mask': result_item['attention_mask'],
+                'label': judgment}
 
     @staticmethod
     def pad_input(text: str, hypothesis: str) -> str:
