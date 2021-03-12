@@ -43,7 +43,8 @@ class SNLIData(Dataset):
         result_item = self.tokenizer(text, hypothesis, return_tensors='pt', max_length=self.max_length,
                                      padding='max_length', truncation=True)  # 99% квантиль: 175 знака / 42 слова
         print(text, '->', hypothesis)
-        return {'input_ids': result_item['input_ids'], 'attention_mask': result_item['attention_mask'],
+        return {'input_ids': result_item['input_ids'].flatten(),
+                'attention_mask': result_item['attention_mask'].flatten(),
                 'label': judgment}
 
     @staticmethod
