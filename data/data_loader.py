@@ -15,7 +15,7 @@ class SNLIDataModule(pl.LightningDataModule):
         self.tokenizer = tokenizer
         self.batch_size = batch_size
 
-    def setup(self):
+    def setup(self, stage=None):
         self.train_dataset = SNLIData(data_name=self.train_filename)
         self.test_dataset = SNLIData(data_name=self.test_filename)
         self.val_dataset = SNLIData(data_name=self.val_filename)

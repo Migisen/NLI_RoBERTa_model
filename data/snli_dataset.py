@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from torch import CharTensor
+from torch import LongTensor
 from transformers import RobertaTokenizer
 
 import json
@@ -26,7 +26,7 @@ class SNLIData(Dataset):
                 if line['gold_label'] not in self.label_map:
                     continue
                 self.data.append((line['sentence1'], line['sentence2']))
-                self.data_labels.append(CharTensor([self.label_map[line['gold_label']]]))
+                self.data_labels.append(LongTensor([self.label_map[line['gold_label']]]))
 
         if tokenizer is None:
             tokenizer = RobertaTokenizer.from_pretrained('roberta-base')

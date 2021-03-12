@@ -4,6 +4,7 @@ from transformers import RobertaModel
 data_module = SNLIDataModule('snli_1.0_train', 'snli_1.0_test', 'snli_1.0_dev', batch_size=8)
 data_module.setup()
 train_sample = data_module.train_dataloader()
+print(len(data_module.train_dataset))
 for data in train_sample:
     input_test = data['input_ids']
     mask_test = data['attention_mask']
