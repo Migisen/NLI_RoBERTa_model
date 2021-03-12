@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 
 # noinspection PyAttributeOutsideInit
 class SNLIDataModule(pl.LightningDataModule):
+
     def __init__(self, train_filename, test_filename, val_name, tokenizer=None, batch_size=8):
         super().__init__()
         self.train_filename = train_filename
