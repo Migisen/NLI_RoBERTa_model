@@ -1,3 +1,6 @@
 /venv/
 /lightning_logs/
 /data/snli/
+/checkpoints/
+/logs/
+/checkpoints/

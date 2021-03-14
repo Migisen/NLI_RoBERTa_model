@@ -39,7 +39,6 @@ class SNLIData(Dataset):
     def __getitem__(self, idx):
         text, hypothesis = self.data[idx]
         judgment = self.data_labels[idx]
-        text_sample = self.pad_input(text, hypothesis)
         result_item = self.tokenizer(text, hypothesis, return_tensors='pt', max_length=self.max_length,
                                      padding='max_length', truncation=True)  # 99% квантиль: 175 знака / 42 слова
         return {'input_ids': result_item['input_ids'].flatten(),
