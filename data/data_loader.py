@@ -30,7 +30,7 @@ class SNLIDataModule(pl.LightningDataModule):
         return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=4)
 
     def val_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=4)
 
     def prepare_data(self, *args, **kwargs):
         pass
