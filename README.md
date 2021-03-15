@@ -4,7 +4,9 @@
 ```python
 pip install -r requirements.txt
 ```
-Данные положить в ``./data/snli/``
+Данные положить в ``./data/snli/`` 
+
+
 Чекпоин положить в ``./data/checkpoints/``
 
 Есть поддержка CLI
