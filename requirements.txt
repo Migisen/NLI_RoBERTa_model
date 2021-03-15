@@ -2,3 +2,5 @@ torch~=1.8.0
 transformers~=4.3.3
 pytorch-lightning~=1.2.3
 wandb~=0.10.22
+tqdm~=4.59.0
+pandas~=1.2.3

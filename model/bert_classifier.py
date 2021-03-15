@@ -1,4 +1,4 @@
-from transformers import RobertaForSequenceClassification, get_linear_schedule_with_warmup
+from transformers import RobertaForSequenceClassification, RobertaConfig, get_linear_schedule_with_warmup
 from torch.optim import AdamW
 
 import pytorch_lightning as pl
@@ -7,11 +7,12 @@ import torch
 
 class ClassifierRoBERT(pl.LightningModule):
 
-    def __init__(self, num_classes, n_epoch, steps_per_epoch=None):
+    def __init__(self, num_classes, n_epoch=5, steps_per_epoch=None):
         super().__init__()
         self.n_epochs = n_epoch
         self.steps_per_epoch = steps_per_epoch
-        self.robert = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=num_classes)
+        self.config = RobertaConfig.from_pretrained('roberta-base', num_labels=num_classes)
+        self.robert = RobertaForSequenceClassification.from_pretrained('roberta-base', config=self.config)
 
     def forward(self, input_ids, attention_mask, label):
         x = self.robert(input_ids=input_ids, attention_mask=attention_mask, labels=label)
@@ -65,7 +66,7 @@ class ClassifierRoBERT(pl.LightningModule):
 
     def test_epoch_end(self, outputs):
         mean_accuracy = self.calculate_mean_statistic(outputs, 'test_accuracy')
-        self.log('test_mean_accuracy', mean_accuracy, prog_bar=False, logger=True)
+
 
     @staticmethod
     def calculate_accuracy(prediction, label):
