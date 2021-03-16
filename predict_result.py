@@ -16,7 +16,7 @@ logging.set_verbosity_error()
 parser = argparse.ArgumentParser(description='Use this file to make predictions and produce result.csv.'
                                              'Place сheckpoint in \'chekpoints\' folder')
 
-parser.add_argument('batch_size', type=int, help='test batch size, choose wisely', default=8)
+parser.add_argument('--batch_size', type=int, help='test batch size, choose wisely', default=8)
 parser.add_argument('--checkpoint_name', help='filename of saved model', default='final_weights.ckpt')
 
 args = parser.parse_args()

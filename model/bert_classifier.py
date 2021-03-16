@@ -28,7 +28,7 @@ class ClassifierRoBERT(pl.LightningModule):
     # Обучение
 
     def training_step(self, batch, batch_idx):
-        input_ids, attention_mask, label = batch.values()
+        input_ids, attention_mask, label, _ = batch.values()
         label = label.flatten()
         loss, prediction = self.forward(input_ids, attention_mask, label).values()
         accuracy = self.calculate_accuracy(prediction, label)
@@ -43,7 +43,7 @@ class ClassifierRoBERT(pl.LightningModule):
     # Валидация
 
     def validation_step(self, batch, batch_idx):
-        input_ids, attention_mask, label = batch.values()
+        input_ids, attention_mask, label, _ = batch.values()
         label = label.flatten()
         loss, prediction = self.forward(input_ids, attention_mask, label).values()
         accuracy = self.calculate_accuracy(prediction, label)
