@@ -1,4 +1,4 @@
-from data.data_loader import SNLIDataModule
+from data.snli_module import SNLIDataModule
 from model.bert_classifier import ClassifierRoBERT
 from transformers import logging
 
@@ -27,7 +27,7 @@ GPUS = args.gpus
 WANDB_ENTITY = args.wandb_entity
 
 if __name__ == '__main__':
-    snli_data = SNLIDataModule('snli_1.0_train', 'snli_1.0_test', 'snli_1.0_dev', batch_size=BATCH_SIZE)
+    snli_data = SNLIDataModule('snli', 'snli_1.0_train', 'snli_1.0_test', 'snli_1.0_dev', batch_size=BATCH_SIZE)
     robert_model = ClassifierRoBERT(
         num_classes=NUM_CLASSES,
         n_epoch=N_EPOCHS,

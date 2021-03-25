@@ -42,7 +42,7 @@ class ClassifierRoBERT(pl.LightningModule):
 
     # Валидация
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(self, batch, batch_idx, dataloader_idx=None):
         input_ids, attention_mask, label, _ = batch.values()
         label = label.flatten()
         loss, prediction = self.forward(input_ids, attention_mask, label).values()
@@ -51,8 +51,15 @@ class ClassifierRoBERT(pl.LightningModule):
         return {'loss': loss, 'val_accuracy': accuracy}
 
     def validation_epoch_end(self, outputs):
-        mean_accuracy = self.calculate_mean_statistic(outputs, 'val_accuracy')
-        self.log('val_mean_accuracy', mean_accuracy, prog_bar=False, logger=True)
+        if all(isinstance(elem, list) for elem in outputs):
+            dataloader_names = {0: 'val_matched', 1: 'val_mismatched'}
+            for dataloader_idx, dataset in enumerate(outputs):
+                mean_accuracy = self.calculate_mean_statistic(dataset, 'val_accuracy')
+                self.log(f'{dataloader_names[dataloader_idx]}_mean_accuracy', mean_accuracy, prog_bar=False,
+                         logger=True)
+        else:
+            mean_accuracy = self.calculate_mean_statistic(outputs, 'val_accuracy')
+            self.log('val_mean_accuracy', mean_accuracy, prog_bar=False, logger=True)
 
     # Тестирование
 
@@ -66,7 +73,6 @@ class ClassifierRoBERT(pl.LightningModule):
 
     def test_epoch_end(self, outputs):
         mean_accuracy = self.calculate_mean_statistic(outputs, 'test_accuracy')
-
 
     @staticmethod
     def calculate_accuracy(prediction, label):

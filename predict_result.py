@@ -1,6 +1,6 @@
 from model.bert_classifier import ClassifierRoBERT
 from torch.utils.data import DataLoader
-from data.snli_dataset import SNLIData
+from data.nli_dataset import NLIData
 from transformers.utils import logging
 from tqdm import tqdm as tq
 
@@ -25,11 +25,10 @@ args = parser.parse_args()
 CHECKPOINT_NAME = args.checkpoint_name
 BATCH_SIZE = args.batch_size
 
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Import data
-snli_test_data = SNLIData(data_name='snli_1.0_test')
+snli_test_data = NLIData(data_name='snli_1.0_test')
 snli_test_loader = DataLoader(dataset=snli_test_data,
                               batch_size=BATCH_SIZE,
                               shuffle=False,
@@ -54,12 +53,9 @@ for i, batch in enumerate(tq(snli_test_loader)):
         _, y_hat = torch.max(prediction, dim=1)
         results += y_hat.tolist()
 
-
 result = pd.DataFrame({'pairID': pair_ids, 'predicted_label': results})
-accuracy = (result.predicted_label == true_labels).sum()/len(true_labels)
+accuracy = (result.predicted_label == true_labels).sum() / len(true_labels)
 print(f'Accuracy on test dataset = {accuracy}')
 print('Saving results.csv...')
 result.to_csv('./results.csv', index=False)
 print('Done!')
-
-
