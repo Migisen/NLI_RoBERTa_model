@@ -17,21 +17,21 @@ class SNLIDataModule(pl.LightningDataModule):
 
     def setup(self, stage=None):
         self.train_dataset = NLIData(file_directory=self.file_directory, file_name=self.train_filename)
-        self.val_dataset = NLIData(file_directory=self.file_directory, file_name=self.val_filename)
+        self.val_dataset_1 = NLIData(file_directory=self.file_directory, file_name=self.val_filename)
         if self.test_filename is not None:
             self.test_dataset = NLIData(file_directory=self.file_directory, file_name=self.test_filename)
 
-    def train_dataloader(self):
+    def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train_dataset,
                           batch_size=self.batch_size,
                           shuffle=True,
-                          num_workers=4)
+                          num_workers=12)
 
-    def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=4)
+    def test_dataloader(self) -> DataLoader:
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=12)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.val_dataset_1, batch_size=self.batch_size, num_workers=12)
 
     def prepare_data(self, *args, **kwargs):
         pass

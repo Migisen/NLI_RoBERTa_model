@@ -15,7 +15,14 @@ class NLIData(Dataset):
         max_length (int, optional): length to which sentences are truncated
     """
 
-    def __init__(self, file_directory: str, file_name: str, tokenizer=None, max_length=42):
+    def __init__(self, file_directory: str, file_name: str, max_length=42):
+        """
+        Загрузка датасета из jsonl
+        Args:
+            file_directory (str): Путь к файлу датасета.
+            file_name (str): Название датасета.
+            max_length (int, optional): Максимальный размер предложения.
+        """
         self.data = []
         self.data_labels = []
         self.pair_id = []
@@ -29,16 +36,13 @@ class NLIData(Dataset):
                 self.pair_id.append(line['pairID'])
                 self.data.append((line['sentence1'], line['sentence2']))
                 self.data_labels.append(LongTensor([self.label_map[line['gold_label']]]))
-
-        if tokenizer is None:
-            tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-        self.tokenizer = tokenizer
+        self.tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
         self.max_length = max_length
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data_labels)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> dict:
         text, hypothesis = self.data[idx]
         judgment = self.data_labels[idx]
         result_item = self.tokenizer(text, hypothesis, return_tensors='pt', max_length=self.max_length,
