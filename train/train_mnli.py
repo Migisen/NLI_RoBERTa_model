@@ -36,7 +36,7 @@ wandb_logger = pl_loggers.WandbLogger(save_dir='../logs',
 checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
                                                    filename='roBERTa_mnli_classifier',
                                                    save_last=True,
-                                                   monitor='val_accuracy',
+                                                   monitor='val_matched_mean_accuracy',
                                                    verbose=True,
                                                    mode='max')
 trainer = pl.Trainer(gpus=GPUS, logger=wandb_logger, callbacks=checkpoint_callback)

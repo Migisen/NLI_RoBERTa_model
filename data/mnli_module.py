@@ -17,6 +17,6 @@ class MNLIDataModule(SNLIDataModule):
         self.val_dataset_2 = NLIData(file_directory=self.file_directory, file_name=self.val_filename_2)
 
     def val_dataloader(self):
-        val_loader_1 = DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=2)
-        val_loader_2 = DataLoader(self.val_dataset_2, batch_size=self.batch_size, num_workers=2)
+        val_loader_1 = DataLoader(self.val_dataset_1, batch_size=self.batch_size, num_workers=12)
+        val_loader_2 = DataLoader(self.val_dataset_2, batch_size=self.batch_size, num_workers=12)
         return [val_loader_1, val_loader_2]
