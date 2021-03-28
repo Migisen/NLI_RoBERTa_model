@@ -1,5 +1,5 @@
 from model.bert_classifier import ClassifierRoBERT
-from data.data_loader import SNLIDataModule
+from data.snli_module import SNLIDataModule
 from transformers import logging
 
 import pytorch_lightning as pl

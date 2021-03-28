@@ -6,13 +6,17 @@ import torch
 
 
 class ClassifierRoBERT(pl.LightningModule):
+    """ Классификатор построенный на roBERTa
+
+    """
 
     def __init__(self, num_classes, n_epoch=5, steps_per_epoch=None):
         super().__init__()
         self.n_epochs = n_epoch
         self.steps_per_epoch = steps_per_epoch
-        self.config = RobertaConfig.from_pretrained('roberta-base', num_labels=num_classes)
-        self.robert = RobertaForSequenceClassification.from_pretrained('roberta-base', config=self.config)
+        self.config = RobertaConfig.from_pretrained('prajjwal1/roberta-base-mnli', num_labels=num_classes)
+        self.robert = RobertaForSequenceClassification.from_pretrained('prajjwal1/roberta-base-mnli',
+                                                                       config=self.config)
 
     def forward(self, input_ids, attention_mask, label):
         x = self.robert(input_ids=input_ids, attention_mask=attention_mask, labels=label)
@@ -21,7 +25,7 @@ class ClassifierRoBERT(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = AdamW(self.parameters(), lr=2e-5)
         warmup_steps = 0
-        total_steps = self.steps_per_epoch * self.n_epochs - warmup_steps
+        total_steps = self.steps_per_epoch * self.n_epochs
         scheduler = get_linear_schedule_with_warmup(optimizer, warmup_steps, total_steps)
         return [optimizer], [scheduler]
 
@@ -42,7 +46,7 @@ class ClassifierRoBERT(pl.LightningModule):
 
     # Валидация
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(self, batch, batch_idx, dataloader_idx=None):
         input_ids, attention_mask, label, _ = batch.values()
         label = label.flatten()
         loss, prediction = self.forward(input_ids, attention_mask, label).values()
@@ -51,8 +55,15 @@ class ClassifierRoBERT(pl.LightningModule):
         return {'loss': loss, 'val_accuracy': accuracy}
 
     def validation_epoch_end(self, outputs):
-        mean_accuracy = self.calculate_mean_statistic(outputs, 'val_accuracy')
-        self.log('val_mean_accuracy', mean_accuracy, prog_bar=False, logger=True)
+        if all(isinstance(elem, list) for elem in outputs):
+            dataloader_names = {0: 'val_matched', 1: 'val_mismatched'}
+            for dataloader_idx, dataset in enumerate(outputs):
+                mean_accuracy = self.calculate_mean_statistic(dataset, 'val_accuracy')
+                self.log(f'{dataloader_names[dataloader_idx]}_mean_accuracy', mean_accuracy, prog_bar=False,
+                         logger=True)
+        else:
+            mean_accuracy = self.calculate_mean_statistic(outputs, 'val_accuracy')
+            self.log('val_mean_accuracy', mean_accuracy, prog_bar=False, logger=True)
 
     # Тестирование
 
@@ -66,7 +77,6 @@ class ClassifierRoBERT(pl.LightningModule):
 
     def test_epoch_end(self, outputs):
         mean_accuracy = self.calculate_mean_statistic(outputs, 'test_accuracy')
-
 
     @staticmethod
     def calculate_accuracy(prediction, label):

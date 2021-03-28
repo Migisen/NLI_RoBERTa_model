@@ -1,6 +1,8 @@
 /venv/
 /lightning_logs/
 /data/snli/
+/data/mnli/
 /checkpoints/
 /logs/
-/checkpoints/
+/mismatched_dev.csv
+/matched_dev.csv

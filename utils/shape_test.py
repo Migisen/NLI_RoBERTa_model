@@ -1,4 +1,4 @@
-from data.data_loader import SNLIDataModule
+from data.snli_module import SNLIDataModule
 from transformers import RobertaModel
 
 data_module = SNLIDataModule('snli_1.0_train', 'snli_1.0_test', 'snli_1.0_dev', batch_size=8)
