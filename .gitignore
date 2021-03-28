@@ -4,3 +4,5 @@
 /data/mnli/
 /checkpoints/
 /logs/
+/mismatched_dev.csv
+/matched_dev.csv

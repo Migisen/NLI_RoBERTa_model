@@ -6,13 +6,17 @@ import torch
 
 
 class ClassifierRoBERT(pl.LightningModule):
+    """ Классификатор построенный на roBERTa
+
+    """
 
     def __init__(self, num_classes, n_epoch=5, steps_per_epoch=None):
         super().__init__()
         self.n_epochs = n_epoch
         self.steps_per_epoch = steps_per_epoch
-        self.config = RobertaConfig.from_pretrained('roberta-base', num_labels=num_classes)
-        self.robert = RobertaForSequenceClassification.from_pretrained('roberta-base', config=self.config)
+        self.config = RobertaConfig.from_pretrained('prajjwal1/roberta-base-mnli', num_labels=num_classes)
+        self.robert = RobertaForSequenceClassification.from_pretrained('prajjwal1/roberta-base-mnli',
+                                                                       config=self.config)
 
     def forward(self, input_ids, attention_mask, label):
         x = self.robert(input_ids=input_ids, attention_mask=attention_mask, labels=label)
@@ -21,7 +25,7 @@ class ClassifierRoBERT(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = AdamW(self.parameters(), lr=2e-5)
         warmup_steps = 0
-        total_steps = self.steps_per_epoch * self.n_epochs - warmup_steps
+        total_steps = self.steps_per_epoch * self.n_epochs
         scheduler = get_linear_schedule_with_warmup(optimizer, warmup_steps, total_steps)
         return [optimizer], [scheduler]
 

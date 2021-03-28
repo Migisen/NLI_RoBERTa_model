@@ -8,20 +8,17 @@ import os
 
 class NLIData(Dataset):
     """
-    NLI dataset converter
-    Attributes:
-        file_name (str): dataset file name (e.g. 'snli_1.0_train')
-        tokenizer (transformers.PreTrainedTokenizer, optional): tokenizer from transformers library
-        max_length (int, optional): length to which sentences are truncated
+    Базовый класс NLI датасета
+
     """
 
     def __init__(self, file_directory: str, file_name: str, max_length=42):
         """
         Загрузка датасета из jsonl
-        Args:
-            file_directory (str): Путь к файлу датасета.
-            file_name (str): Название датасета.
-            max_length (int, optional): Максимальный размер предложения.
+        :param  file_directory: (str): Путь к файлу датасета.
+        :param  file_name: (str): Название датасета.
+        :param  max_length: (int, optional): Максимальный размер предложения.
+
         """
         self.data = []
         self.data_labels = []
@@ -43,6 +40,11 @@ class NLIData(Dataset):
         return len(self.data_labels)
 
     def __getitem__(self, idx) -> dict:
+        """
+
+        :param idx: int: id объекта
+        :return: dict: возвращает данные для загрузки в модель
+        """
         text, hypothesis = self.data[idx]
         judgment = self.data_labels[idx]
         result_item = self.tokenizer(text, hypothesis, return_tensors='pt', max_length=self.max_length,
@@ -52,14 +54,3 @@ class NLIData(Dataset):
                 'attention_mask': result_item['attention_mask'].flatten(),
                 'label': judgment,
                 'pair_id': pair_id}
-
-    @staticmethod
-    def pad_input(text: str, hypothesis: str) -> str:
-        """
-        Any preprocessing can be done here
-        :param text: first sentence
-        :param hypothesis: second sentence
-        :return:
-        """
-        result: str = f'{text} {hypothesis}'
-        return result
