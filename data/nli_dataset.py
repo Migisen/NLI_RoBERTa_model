@@ -12,13 +12,13 @@ class NLIData(Dataset):
 
     """
 
-    def __init__(self, file_directory: str, file_name: str, max_length=42):
+    def __init__(self, file_directory: str, file_name: str, max_length=42, test_mode=False):
         """
         Загрузка датасета из jsonl
-        :param  file_directory: (str): Путь к файлу датасета.
-        :param  file_name: (str): Название датасета.
-        :param  max_length: (int, optional): Максимальный размер предложения.
-
+        :param  file_directory: (str): путь к файлу датасета.
+        :param  file_name: (str): название датасета.
+        :param  max_length: (int, optional): максимальный размер предложения.
+        :param  test_mode: (bool, optional): загрузка тестового датасета без gold_label
         """
         self.data = []
         self.data_labels = []
@@ -28,10 +28,13 @@ class NLIData(Dataset):
         with open(self.data_path, 'r') as f:
             for line in f.readlines():
                 line = json.loads(line)
-                if line['gold_label'] not in self.label_map:
+                if line['gold_label'] not in self.label_map and not test_mode:
                     continue
                 self.pair_id.append(line['pairID'])
                 self.data.append((line['sentence1'], line['sentence2']))
+                if test_mode:
+                    self.data_labels.append(LongTensor([0]))
+                    continue
                 self.data_labels.append(LongTensor([self.label_map[line['gold_label']]]))
         self.tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
         self.max_length = max_length

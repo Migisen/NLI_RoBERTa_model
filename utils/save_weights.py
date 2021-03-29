@@ -4,6 +4,6 @@ import torch
 import os
 
 checkpoint_path = os.path.join('../', 'checkpoints')
-model = ClassifierRoBERT.load_from_checkpoint(os.path.join(checkpoint_path, 'roBERTa_mnli_classifier.ckpt'),
+model = ClassifierRoBERT.load_from_checkpoint(os.path.join(checkpoint_path, 'roBERTa_mnli_large.ckpt'),
                                               num_classes=3, n_epoch=5)
-torch.save(model.state_dict(), os.path.join(checkpoint_path, 'mnli_weights.ckpt'))
+torch.save(model.state_dict(), os.path.join(checkpoint_path, 'mnli_large_weights.ckpt'))
