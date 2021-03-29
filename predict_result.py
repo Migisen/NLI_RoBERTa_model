@@ -69,9 +69,7 @@ for i, batch in enumerate(tq(nli_loader)):
 
 label_map = {0: 'contradiction', 1: 'neutral', 2: 'entailment'}
 result = pd.DataFrame({'pairID': pair_ids, 'gold_label': results})
-accuracy = (result.gold_label == true_labels).sum() / len(true_labels)
 result.replace({'gold_label': label_map}, inplace=True)
-print(f'Accuracy on test dataset = {accuracy}')
 print(f'Saving {OUTPUT_NAME}.csv...')
 result.to_csv(f'./{OUTPUT_NAME}.csv', index=False)
 print('Done!')
