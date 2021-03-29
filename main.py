@@ -6,6 +6,8 @@ import pytorch_lightning.loggers as pl_loggers
 import pytorch_lightning as pl
 import argparse
 
+# todo: Переделать
+
 # Disable transformers warnings
 logging.set_verbosity_error()
 

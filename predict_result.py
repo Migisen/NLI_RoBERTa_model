@@ -22,6 +22,7 @@ logging.set_verbosity_error()
 # CLI
 parser = argparse.ArgumentParser(description='Use this file to make predictions and produce result.csv.'
                                              'Place сheckpoint in \'chekpoints\' folder')
+parser.add_argument('test_mode', type=bool, help='set to True if you want to predict on test (without labels) dataset')
 parser.add_argument('-d', '--dataset_dir', type=str, help='dataset folder', default='snli', choices=('snli', 'mnli'))
 parser.add_argument('-n', '--dataset_name', type=str, help='dataset filename', default='snli_1.0_test')
 parser.add_argument('-b', '--batch_size', type=int, help='test batch size, choose wisely', default=8)
@@ -37,12 +38,13 @@ BATCH_SIZE = args.batch_size
 DATASET_DIR = args.dataset_dir
 DATASET_NAME = args.dataset_name
 OUTPUT_NAME = args.output_name
+TEST_MODE = args.test_mode
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Загружаем данные
 
-nli_data = NLIData(file_directory=DATASET_DIR, file_name=DATASET_NAME)
+nli_data = NLIData(file_directory=DATASET_DIR, file_name=DATASET_NAME, test_mode=TEST_MODE)
 nli_loader = DataLoader(dataset=nli_data, batch_size=BATCH_SIZE,
                         shuffle=False, num_workers=4)
 
@@ -65,8 +67,10 @@ for i, batch in enumerate(tq(nli_loader)):
         _, y_hat = torch.max(prediction, dim=1)
         results += y_hat.tolist()
 
-result = pd.DataFrame({'pairID': pair_ids, 'predicted_label': results})
-accuracy = (result.predicted_label == true_labels).sum() / len(true_labels)
+label_map = {0: 'contradiction', 1: 'neutral', 2: 'entailment'}
+result = pd.DataFrame({'pairID': pair_ids, 'gold_label': results})
+accuracy = (result.gold_label == true_labels).sum() / len(true_labels)
+result.replace({'gold_label': label_map}, inplace=True)
 print(f'Accuracy on test dataset = {accuracy}')
 print(f'Saving {OUTPUT_NAME}.csv...')
 result.to_csv(f'./{OUTPUT_NAME}.csv', index=False)

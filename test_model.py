@@ -7,6 +7,8 @@ import argparse
 import torch
 import os
 
+# todo: удалить
+
 # Disable transformers warnings
 logging.set_verbosity_error()
 

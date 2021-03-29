@@ -6,7 +6,7 @@ import torch
 
 
 class ClassifierRoBERT(pl.LightningModule):
-    """ Классификатор построенный на roBERTa
+    """ Классификатор, построенный на roBERTa
 
     """
 
@@ -14,8 +14,8 @@ class ClassifierRoBERT(pl.LightningModule):
         super().__init__()
         self.n_epochs = n_epoch
         self.steps_per_epoch = steps_per_epoch
-        self.config = RobertaConfig.from_pretrained('prajjwal1/roberta-base-mnli', num_labels=num_classes)
-        self.robert = RobertaForSequenceClassification.from_pretrained('prajjwal1/roberta-base-mnli',
+        self.config = RobertaConfig.from_pretrained('roberta-large-mnli', num_labels=num_classes)
+        self.robert = RobertaForSequenceClassification.from_pretrained('roberta-large-mnli',
                                                                        config=self.config)
 
     def forward(self, input_ids, attention_mask, label):
