@@ -17,7 +17,6 @@ pip install - r requirements.txt
 Есть поддержка CLI
 
 ```bash
-python main.py --help
 python predict_result.py --help
 ```
 
