@@ -4,6 +4,7 @@ from data.nli_dataset import NLIData
 from transformers.utils import logging
 from tqdm import tqdm as tq
 
+import torch.nn as nn
 import pandas as pd
 import argparse
 import torch
@@ -51,10 +52,12 @@ nli_loader = DataLoader(dataset=nli_data, batch_size=BATCH_SIZE,
 checkpoint_name = os.path.join('checkpoints', CHECKPOINT_NAME)
 roberta_model = ClassifierRoBERT(num_classes=3).to(device)
 roberta_model.load_state_dict(state_dict=torch.load(checkpoint_name))
+softmax = nn.Softmax(dim=1)
 
 results = []
 pair_ids = []
 true_labels = []
+confidence_list = []
 for i, batch in enumerate(tq(nli_loader)):
     input_ids = batch['input_ids'].to(device)
     attention_mask = batch['attention_mask'].to(device)
@@ -64,7 +67,9 @@ for i, batch in enumerate(tq(nli_loader)):
     with torch.no_grad():
         prediction = roberta_model(input_ids, attention_mask, label).logits
         prediction.to('cpu')
-        _, y_hat = torch.max(prediction, dim=1)
+        probabilities = softmax(prediction)
+        confidence, y_hat = torch.max(probabilities, dim=1)
+        confidence_list.append(torch.mean(confidence))
         results += y_hat.tolist()
 
 label_map = {0: 'contradiction', 1: 'neutral', 2: 'entailment'}
@@ -72,6 +77,7 @@ result = pd.DataFrame({'pairID': pair_ids, 'gold_label': results})
 result.replace({'gold_label': label_map}, inplace=True)
 print(f'Saving {OUTPUT_NAME}.csv...')
 result.to_csv(f'./{OUTPUT_NAME}.csv', index=False)
+print(sum(confidence_list) / len(confidence_list))
 print('Done!')
 
 if __name__ == '__main__':
