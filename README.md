@@ -20,9 +20,7 @@ MNLI Mismatched:
 Зависимости
 
 ```python
-pip
-install - r
-requirements.txt
+pip install -r requirements.txt
 ```
 
 Данные положить в ``./data/snli/`` и ``./data/mnli/``
