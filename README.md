@@ -12,6 +12,7 @@ https://drive.google.com/file/d/14EWvcg9eMg95UL-H21MvYbE5q8Hh4S61/view?usp=shari
 
 MNLI Matched:
 ![](pictures/matched.png)
+
 MNLI Mismatched:
 ![](pictures/mismatched.png)
 
